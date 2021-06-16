@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Acts Project Webgame</title>
+    <style>
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+        .bigButton {
+            width: 84.67mm;
+            height: 13mm;
+            font-size: 3.39mm;
+            color: #FAD744;
+            background-color: #EF5455;
+            text-align: center;
+        }
+        .buttons {
+            width: 55mm;
+            height: 13.5mm;
+            font-size: 3mm;
+            color: #FAD744;
+            background-color: #EF5455;
+            text-align: left;
+        }
+        .characters {
+            position: absolute;
+            top: 20mm;
+            left: 17mm; 
+            width: 22mm;
+            height: 33.87mm;
+
+        }
+        .headingAbsolute {
+            width: 109mm;
+            top: 1px;
+            font-size: 5mm;
+            position: absolute;
+            margin-left: auto;
+            margin-right: auto;
+            left: 0;
+            right: 0;
+        }
+        .heading {
+            width: 109mm;
+            font-size: 5mm;
+        }
+        .startScreen {
+            width: 84.67mm;
+            height: 50.8mm;
+        }
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 50px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,255,0); /* Fallback color */
+            background-color: rgba(0,255,0,0.4); /* Black w/ opacity */
+            text-align: center;
+        }
+        
+        .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 5px;
+        border: 1px solid #888;
+        width: 80%;
+        }
+
+        .close {
+        color: #aaaaaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        }
+
+        .scene {
+            width: 105mm;
+            height: 62mm;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        .walkAcross {
+            transition: transform 1.5s linear;
+        }
+        .walkAcross-active {
+            transform: translateX(75mm);
+        }
+        .sailAcross {
+            transition: transform 2.5s linear;
+        }
+        .sailAcross-active {
+            transform: translateX(68mm);
+        }
+        .walkAcrossReset {
+            transform: none;
+        }
+        .fall {
+            transition: transform 1s linear;
+        }
+        .fall-active {
+            transform: rotate(90deg) translateX(7mm);
+        }
+        #boat {
+            position: absolute;
+            top: 15mm;
+            left: 15mm;
+            width: 40mm;
+            height: 40mm;
+            display: none;
+        }
+    </style>
+<head>
+<body>
+    <script src="jquery-3.4.1.js"></script>
+    <div id='StartScreen'>
+        <h1 class='center headingAbsolute'>Paul and his Journeys in Acts Game</h1>
+        <img src='ActsStartScreen.JPG' class='center startScreen'>
+        <br>
+        <button onclick='startGame();' class='center bigButton'>START YOUR ADVENTURE!</button>
+    </div>
+
+    <div id='quiz'>
+        <h1 id='question' class='heading center'></h1>
+        <br>
+        <button onclick='aClicked(); isCorrect();' class='buttons'>a) <span id='choiceA'></span></button>
+        <br>
+        <button onclick='bClicked(); isCorrect();' class='buttons'>b) <span id='choiceB'></span></button>
+        <br>
+        <button onclick='cClicked(); isCorrect();' class='buttons'>c) <span id='choiceC'></span></button>
+        <br>
+        <button onclick='dClicked(); isCorrect();' class='buttons'>d) <span id='choiceD'></span></button>
+    </div>
+
+    <div id='endScreen'>
+        <h1 class='center'>Good job! <br> You have successfully traveled with Paul, and have made it to the end! Hope you enjoyed :P <br> <br> Hopefully Paul is proud of you lol</h1>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <!--<p><span id='evaluate'></span></p>-->
+            <img src='correctIcon.png' id='evaluate'>
+        </div>
+    </div>
+
+    <div id='storyLine'>
+        <img src='PaulBasic.png' class='characters walkAcross fall' id='character1'>
+        <img src='PaulOnBoat.png' class='sailAcross' id='boat'>
+        <img src='ToDamascusScene.jpg' class='scene' id='backgroundImage'>
+       
+        <button onclick='nextSlide()' class='bigButton center'>NEXT!</button>
+    </div>
+</body>
+</html>
+    
+<script>
+    document.getElementById('storyLine').style.display = 'none';    
+    document.getElementById('quiz').style.display = 'none';
+    document.getElementById('endScreen').style.display = 'none';
+
+    function startGame(){
+        document.getElementById('quiz').style.display = 'inline-block';
+        document.getElementById('StartScreen').style.display = 'none';
+    }
+
+    var question = document.getElementById('question')
+    var choiceA = document.getElementById('choiceA')
+    var choiceB = document.getElementById('choiceB')
+    var choiceC = document.getElementById('choiceC')
+    var choiceD = document.getElementById('choiceD')
+    var buttons = document.getElementsByClassName('buttons')
+
+    var questions = 
+    ['Before his conversion, Paul is trying to ______. He even approves Stephens stoning', 
+    'On the road to ______ Paul hears God saying, Paul, Paul why do you persecute me?',
+    'Paul turns from his evil ways & starts ______',
+    'Pauls first friend, ______, who preached with Paul to many people and places.',
+    'They decide to preach to the Gentiles because the Jews were ______',
+    'Which one of the following were not one of the places Paul and Barnabas preached to in Acts 14?',
+    'Paul and Barnabas preached that you do not have to ______ to be saved',
+    'What did Paul and Barnabas disagree upon that made them go their own ways?',
+    'Paul and Silas go to Phillipi. They are severely beaten and thrown into jail after being falsely accused. They sing praises to God and then  ______',
+    'Paul, Silas, and Timothy preach to Thessalonica and Berea. Paul then leaves them for a while to preach to ______.',
+    'Paul then preaches to Corinth, where he meets up with Silas and Timothy again. He stays there for a while because it is safe and works as a ______',
+    'Huge riot, many people believe in Jesus from Pauls teaching, many believe in _______',
+    'Paul encourages the Ephesians and then travels to ______, compelled by the Spirit, where he is willing to face death for Jesus.',
+    'When the Jews of Jerusalem see Paul, they scream false witness against him and severely beat him. Before he is brought to jail he asks to ______',
+    'Paul tells all the angry Jews his story, and they were fine until they heard he was _______. The soldiers try to flog him, but can not since he is Roman.',
+    'The soldiers take Paul to the Sandherin, where he again testifies. They argue and some try to kill him, but he is safely sent to _______ to be judged.',
+    'The Jews falsely witness and Paul defends himself once more. Felix puts Paul in jail, but with a lot of freedom, and Paul uses this as an opportunity to _______.',
+    'Felix retires and is replaced by Festus. King Agrippa is also interested in the Paul business. Paul is tried again and again so he then _______.',
+    'On the voyage to Rome, Paul encounters a huge storm. Everyone thinks they will die, but they luckily find land. They get shipwrecked, but they swim to shore safely.',
+    'They are shipwrecked on ______. Natives are kind to them. Paul heals lots of the people there and preaches to them. Paul and the crew sail to Rome once they restocked.',
+    'Paul then lives in Rome, waiting for trial, with a soldier guarding him. He spends 2 years preaching to the ______ in Rome, also writing letters to his church leaders.',
+    'Extra Question(Not from Acts) Unfortunately Pauls life sadly ends where he is killed by ______, but he lived as a faithful servant to God although many trials faced him, converting many.'] 
+    var choices = 
+    [['persecute Christians', 'preach to the synagogue', 'stone Stephen', 'visit Silas'], //a
+    ['Ephesus', 'Corinth', 'Damascus', 'Rome'], //c
+    ['helping the poor', 'preaching the gospel', 'freeing Christians that were in jail', 'selling his possessions for the poor'], //b
+    ['Silas', 'Barnabas', 'John Mark', 'Claudius'], //b
+    ['annoying', 'asking too many questions', 'listening to a different preacher they thought was better','abusive and hard headed' ], //d 
+    ['Iconium', 'Lystra', 'Derbe', 'Athens'], //d
+    ['keep the law of Moses', 'be a good person', 'fast', 'gain approval of the priests and Jewish leaders'], //a
+    ['How to preach the gospel', 'Whether to risk their lives for God', 'Whether to bring John with them or not', 'Where to go next to preach'], //c
+    ['A violent earthquake sets free all the prisoners', 'suddenly find themselves teleported out of jail',
+    'are able to walk out of jail unnoticed', 'the jailer is Christian and sneaks them out of prison'], //a
+    ['Colossia', 'Ephesus', 'Asia', 'Athens'], //d
+    ['potter', 'tentmaker', 'merchant', 'governor'], //b
+    ['Zeus', 'Hermes', 'Poseidon', 'Artemis'], //d
+    ['Asia', 'Damascus', 'Jerusalem', 'Rome'], //c
+    ['testify to the crowd', 'meet with the governor to be judged', 'ask the crowd why they hate him', 'say farewell to his good friends'], //a
+    ['not following all of Moses law', 'eating with Gentiles', 'preaching to Gentiles', 'preaching on Sabbath'], //c
+    ['Caesar', 'Governor Felix', 'Herod', 'Festus'], //b
+    ['escape jail', 'write letters to strengthen his fellow believers', 'preach to Felix', 'befriend the people in Caesarea'], //c
+    ['gives up and pleads guilty', 'negotiates with the judge', 'bribes the Jews', 'appeals to the emperor'], //d
+    ['huge storm', 'Leviathan', 'Tsunami', 'fierce pirates'], //a
+    ['Patmos', 'Malta', 'Macedonia', 'Asia'], //b
+    ['Jews', 'Gentiles', 'Jewish & Roman Christians', 'All of the above'], //d
+    ['Caesar', 'Octavian', 'Nero', 'King Agrippa']//c
+    ]
+
+    var questionNumber = 0
+    var correctAnswer = 0
+    var clickedAnswer = 1000
+
+    question.innerHTML = questions[questionNumber]
+    choiceA.innerHTML = choices[questionNumber][0]
+    choiceB.innerHTML = choices[questionNumber][1]
+    choiceC.innerHTML = choices[questionNumber][2]
+    choiceD.innerHTML = choices[questionNumber][3]
+
+    function aClicked(){
+        clickedAnswer = 0
+    }
+    function bClicked(){
+        clickedAnswer = 1
+    }
+    function cClicked(){
+        clickedAnswer = 2
+    }
+    function dClicked(){
+        clickedAnswer = 3
+    }
+    function answer(){ 
+        if (questionNumber == 0) {
+            correctAnswer = 0
+        }
+        else if (questionNumber == 1) {
+            correctAnswer = 2
+        }
+        else if (questionNumber == 2) {
+            correctAnswer = 1
+        }
+        else if (questionNumber == 3) {
+            correctAnswer = 1
+        }
+        else if (questionNumber == 4) {
+            correctAnswer = 3
+        }
+        else if (questionNumber == 5) {
+            correctAnswer = 3
+        }
+        else if (questionNumber == 6) {
+            correctAnswer = 0
+        }
+        else if (questionNumber == 7) {
+            correctAnswer = 2
+        }
+        else if (questionNumber == 8) {
+            correctAnswer = 0
+        }
+        else if (questionNumber == 9) {
+            correctAnswer = 3
+        }
+        else if (questionNumber == 10) {
+            correctAnswer = 1
+        }
+        else if (questionNumber == 11) {
+            correctAnswer = 3
+        }
+        else if (questionNumber == 12) {
+            correctAnswer = 2
+        }
+        else if (questionNumber == 13) {
+            correctAnswer = 0
+        }
+        else if (questionNumber == 14) {
+            correctAnswer = 2
+        }
+        else if (questionNumber == 15) {
+            correctAnswer = 1
+        }
+        else if (questionNumber == 16) {
+            correctAnswer = 2
+        }
+        else if (questionNumber == 17) {
+            correctAnswer = 3
+        }
+        else if (questionNumber == 18) {
+            correctAnswer = 0
+        }
+        else if (questionNumber == 19) {
+            correctAnswer = 1
+        }
+        else if (questionNumber == 20) {
+            correctAnswer = 3
+        }
+        else if (questionNumber == 21) {
+            correctAnswer = 2
+        }
+    }
+    var click = 0
+
+    function nextSlide() {
+        click++
+        console.log(click);
+        if (questionNumber == 1) { 
+            if (click == 1) { 
+                $('.walkAcross').toggleClass('walkAcross-active');
+            }
+            else { 
+                $('.walkAcross-active').toggleClass('walkAcrossReset');
+                character1.classList.remove('walkAcross')
+                character1.classList.remove('walkAcross-active')
+                document.getElementById('storyLine').style.display = 'none';
+                document.getElementById('quiz').style.display = 'block';
+                click = 0
+            }
+        }
+        else if (questionNumber == 2) {
+            if (click == 1) { 
+                $('.fall').toggleClass('fall-active');
+            }
+            else { 
+                document.getElementById('storyLine').style.display = 'none';
+                document.getElementById('quiz').style.display = 'block';
+                click = 0
+            }
+        }
+        else if (questionNumber == 7) {
+            if(click == 1) {
+                backgroundImage.src = 'JewsReject.jpg'
+            }
+            else if(click == 2) {
+                backgroundImage.src = 'PaulGentiles.jpg'
+            }
+            else {
+                character1.style.display = 'block'
+                document.getElementById('storyLine').style.display = 'none';
+                document.getElementById('quiz').style.display = 'block';
+                click = 0
+            }
+        }
+        else if (questionNumber == 9) {
+            if (click == 1) { 
+                backgroundImage.src = 'PaulSilasJailEscape.jpg'
+            }
+            else { 
+                character1.style.display = 'block'
+                document.getElementById('storyLine').style.display = 'none';
+                document.getElementById('quiz').style.display = 'block';
+                click = 0
+            }
+        }
+        else if (questionNumber == 19) {
+            if (click == 1) { 
+                $('.sailAcross').toggleClass('sailAcross-active');
+            }
+            else { 
+                character1.style.display = 'block'
+                document.getElementById('boat').style.display = 'none'
+                document.getElementById('storyLine').style.display = 'none';
+                document.getElementById('quiz').style.display = 'block';
+                click = 0
+            }
+        }
+        else if (questionNumber == 21) {
+            character1.style.display = 'block'
+            document.getElementById('boat').style.display = 'none'
+            document.getElementById('storyLine').style.display = 'none';
+            document.getElementById('quiz').style.display = 'block';
+            click = 0
+        }
+        else {
+
+        }
+    } 
+
+    function isCorrect() {
+        answer()
+        if (clickedAnswer == correctAnswer) {
+            questionNumber += 1
+            if (questionNumber < 22) {
+
+                evaluate.src = 'correctIcon.png'
+                modal.style.display = 'block';
+                modal.style.background = 'rgba(0,255,0,0.4)'; 
+                
+                document.getElementById('quiz').style.display = 'none';
+                document.getElementById('storyLine').style.display = 'block';
+                
+                if (questionNumber == 2) {
+                    backgroundImage.src = 'PaulMeetsJesus.jpg'
+                    character1.style.left = '50mm';
+                    character1.style.top = '23mm';
+                }
+                else if (questionNumber == 7) {
+                    backgroundImage.src = 'PaulJews.jpg'
+                    character1.style.display = 'none';
+                }
+                else if (questionNumber == 9) {
+                    backgroundImage.src = 'PaulSilasJail.jpg'
+                    character1.style.display = 'none';
+                }
+                else if (questionNumber == 19) {
+                    backgroundImage.src = 'BoatInStorm.jpg'
+                    character1.style.display = 'none';
+                    document.getElementById('boat').style.display = 'block'
+                }
+                else if (questionNumber == 21) {
+                    backgroundImage.src = 'PaulLetters.jpg'
+                    character1.style.display = 'none';
+                    document.getElementById('boat').style.display = 'none'
+                }
+                if ((questionNumber != 1) && (questionNumber != 2) && (questionNumber!= 7) && (questionNumber != 9) && (questionNumber != 19) && (questionNumber != 21)) {
+                        document.getElementById('storyLine').style.display = 'none';
+                        document.getElementById('quiz').style.display = 'block';
+                }
+                question.innerHTML = questions[questionNumber]
+                choiceA.innerHTML = choices[questionNumber][0]
+                choiceB.innerHTML = choices[questionNumber][1]
+                choiceC.innerHTML = choices[questionNumber][2]
+                choiceD.innerHTML = choices[questionNumber][3]
+
+            }
+            else {
+                evaluate.src = 'correctIcon.png'
+                modal.style.display = 'block';
+                modal.style.background = 'rgba(0,255,0,0.4)';  
+                document.getElementById('quiz').style.display = 'none';
+                document.getElementById('endScreen').style.display = 'block';     
+            }
+        }
+        else {
+            modal.style.background = 'rgba(255,0,0,0.4)';
+            evaluate.src = 'incorrectIcon.png';
+            modal.style.display = "block";
+        }
+    }
+    // Get the modal
+    var modal = document.getElementById("myModal");
+    var character1 = document.getElementById('character1')
+    var backgroundImage = document.getElementById('backgroundImage')
+    var evaluate = document.getElementById('evaluate')
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+
