@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>BlackJack</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <title>BlackJack</title>
+    <!--web app-->
+    <link rel="manifest" href="manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#000000">
+    <!--iOS-->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta id="status-bar-meta" name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="BlackJack">
+    <!--icons-->
+    <link rel="apple-touch-icon" href="touch-icons/touch-icon-iphone.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="touch-icons/touch-icon-ipad.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="touch-icons/touch-icon-iphone-retina.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="touch-icons/touch-icon-ipad-retina.png">
+    <!--splashscreens-->
+    <link href="splashscreens/iphone5_splash.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+    <link href="splashscreens/iphone6_splash.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+    <link href="splashscreens/iphoneplus_splash.png" media="(device-width: 621px) and (device-height: 1104px) and (-webkit-device-pixel-ratio: 3)" rel="apple-touch-startup-image" />
+    <link href="splashscreens/iphonex_splash.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" rel="apple-touch-startup-image" />
+    <link href="splashscreens/iphonexr_splash.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+    <link href="splashscreens/iphonexsmax_splash.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" rel="apple-touch-startup-image" />
+    <link href="splashscreens/ipad_splash.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+    <link href="splashscreens/ipadpro1_splash.png" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+    <link href="splashscreens/ipadpro3_splash.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+    <link href="splashscreens/ipadpro2_splash.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+  </head>
+  <body>
+
+    <header>
+      <h1>BlackJack</h1>
+
+    </header>
+    <div id="highscore"></div>
+
+    <div id="play-area" style="text-align: center">
+      <div id="dealer">
+        <p id="sumOfDealerCards">0</p>
+        <h2>Dealer</h2>
+        <div class="dealerCard" id="dealerPlayCard"><img src="img/cards/1x/back-red.png"></div>
+      </div>
+      <div id="player">
+        <p id="sumOfPlayerCards">0</p>
+        <h2>Player</h2>
+
+        <div class="playerCard" id="nextPlayCard"><img src="img/cards/1x/back-red.png"></div>
+
+      </div>
+    </div>
+
+    <div class="Money">
+
+      <p id="money">Money: 500</p>
+      <p id="betAmountLbl">Bet this round: 0</p>
+
+
+    </div>
+
+    <div class="buttons left">
+      <button class="hit" >Hit</button>
+      <button class="hold">Hold</button>
+      <button class="new-game">Restart</button>
+      <button class="rules" onclick="window.open('https://www.bicyclecards.com/how-to-play/blackjack/','_blank')">Rules</button>
+    </div>
+
+    <div class="buttons right bet">
+      <button>50</button>
+      <button>100</button>
+      <button>1000</button>
+
+    </div>
+    <div class="allIn">
+      <button>ALL IN</button>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+    if ('serviceWorker' in navigator) {
+    	window.addEventListener('load', function() {
+      		navigator.serviceWorker.register('sw.js').then(function(registration) {
+      		console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      	}, function(err) {
+      		console.log('ServiceWorker registration failed: ', err);
+      	});
+      });
+    }
+    </script>
+
+  </body>
+</html>
